@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - CivicLens</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="logo-container">
+      <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 12px;">
+        <div class="logo-icon">🔍</div>
+        <div class="logo-text">
+          <h1>CivicLens</h1>
+          <p>AI Infrastructure Auditor &amp; Complaint System</p>
+        </div>
+      </a>
+    </div>
+    <div class="nav-status">
+      <div id="userProfileNav" style="display: flex; align-items: center; gap: 10px;">
+        <span id="userEmailBadge" style="display: none; font-size: 0.85rem; font-weight: 600; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.3);">
+          👤 <span id="navEmailText">Guest User</span>
+        </span>
+        <a href="login.html" class="btn-auth" style="text-decoration: none;" id="btnAuthToggle">Sign In / Register</a>
+        <button id="btnLogout" class="btn-auth" style="display: none; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; cursor: pointer; padding: 8px 16px; border-radius: 12px; font-weight: 600;" onclick="handleUserLogout()">
+          🚪 Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <ul class="nav-menu">
+        <li class="nav-item active" data-tab="tab-feed">
+          <span>📰</span> Community Feed
+        </li>
+        <li class="nav-item" data-tab="tab-map">
+          <span>🗺️</span> Issue Map
+        </li>
+        <li class="nav-item" data-tab="tab-report">
+          <span>📷</span> Report New Issue
+        </li>
+        <li class="nav-item" data-tab="tab-docket">
+          <span>📜</span> Complaint Docket Ticket
+        </li>
+        <li class="nav-item" data-tab="tab-profile">
+          <span>👤</span> Profile &amp; Settings
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+      <!-- TAB 1: COMMUNITY FEED -->
+      <section id="tab-feed" class="tab-pane active">
+        <div class="section-header">
+          <h2>Community Infrastructure Feed</h2>
+          <button class="btn-primary" onclick="switchTab('tab-report')">
+            <span>+</span> Report New Issue
+          </button>
+        </div>
+
+        <div class="filter-chips">
+          <button class="chip active" onclick="filterFeed('all', this)">All Issues</button>
+          <button class="chip" onclick="filterFeed('manhole', this)">🕳️ Open Manholes</button>
+          <button class="chip" onclick="filterFeed('pothole', this)">Potholes</button>
+          <button class="chip" onclick="filterFeed('waste', this)">Waste &amp; Trash</button>
+          <button class="chip" onclick="filterFeed('streetlight', this)">Streetlights</button>
+          <button class="chip" onclick="filterFeed('water', this)">Water Leaks</button>
+        </div>
+
+        <div class="cards-grid" id="feedCardsGrid">
+          <!-- Feed Cards rendered dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- TAB 2: GEOTAGGED MAP VIEW -->
+      <section id="tab-map" class="tab-pane">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2 style="margin: 0;">Geotagged Civic Issue Map</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Real-time interactive Google / OpenStreetMap tile map with live defect markers &amp; GPS coordinates.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span id="mapIssueCountBadge" style="font-size: 0.85rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.3);">
+              📍 <span id="mapCountText">0 Issues Mapped</span>
+            </span>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.25rem;">
+          <!-- Map Controls Toolbar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 1rem;">
+            <!-- Category Filters -->
+            <div class="filter-chips" style="margin-bottom: 0;">
+              <button class="chip active" onclick="filterMapCategory('all', this)">All</button>
+              <button class="chip" onclick="filterMapCategory('manhole', this)">🕳️ Open Manholes</button>
+              <button class="chip" onclick="filterMapCategory('pothole', this)">Potholes</button>
+              <button class="chip" onclick="filterMapCategory('waste', this)">Waste</button>
+              <button class="chip" onclick="filterMapCategory('streetlight', this)">Streetlights</button>
+              <button class="chip" onclick="filterMapCategory('water', this)">Water Leaks</button>
+            </div>
+
+            <!-- Map Layer Switcher & GPS Controls -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <select id="mapStyleSelect" onchange="changeMapStyle(this.value)" style="background: rgba(15, 23, 42, 0.8); color: #f8fafc; border: 1px solid var(--border-color); padding: 7px 12px; border-radius: 10px; font-size: 0.85rem; cursor: pointer; font-family: var(--font-main);">
+                <option value="streets" selected>🗺️ OpenStreetMap Streets</option>
+                <option value="satellite">🛰️ Google Hybrid Satellite</option>
+                <option value="dark">🌃 Sleek Dark Canvas</option>
+                <option value="osm">🛣️ OpenStreetMap Standard</option>
+              </select>
+
+              <button onclick="centerMapUserLocation()" title="Find My Location" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; padding: 7px 12px; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                🎯 Recenter
+              </button>
+            </div>
+          </div>
+
+          <!-- Leaflet Interactive Map Container -->
+          <div id="leafletMap" style="width: 100%; height: 530px; border-radius: 14px; border: 1px solid var(--border-color); overflow: hidden; z-index: 1;"></div>
+          
+          <p style="color: var(--text-muted); margin-top: 10px; font-size: 0.85rem; text-align: center;">
+            💡 Click any map marker pin to inspect issue photo, GPS coordinates, severity, and ticket docket.
+          </p>
+        </div>
+      </section>
+
+      <!-- TAB 3: NEW REPORT & GEMINI AI CLASSIFIER -->
+      <section id="tab-report" class="tab-pane">
+        <div class="section-header">
+          <h2>Report Civic Infrastructure Defect</h2>
+        </div>
+
+        <div class="report-form-grid">
+          <!-- Photo Upload & AI Trigger Card -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem;">
+            <h3 style="margin-bottom: 1rem; font-family: var(--font-display);">1. Photo Evidence</h3>
+            
+            <div class="dropzone" id="dropzone" style="cursor: pointer;" onclick="document.getElementById('photoFileInput').click()">
+              <input type="file" id="photoFileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+              <div id="previewContainer">
+                <div style="font-size: 40px; margin-bottom: 8px;">📷</div>
+                <p style="font-weight: 600;">Drag &amp; Drop Photo or Click to Upload</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Supports JPEG, PNG, WEBP</p>
+              </div>
+            </div>
+
+            <p style="text-align: center; margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">Or select a quick 1-click test sample:</p>
+            <div class="sample-presets">
+              <img src="assets/manhole.jpg" class="preset-thumb" onclick="loadPreset('manhole')" title="Open Manhole Defect">
+              <img src="assets/pothole.jpg" class="preset-thumb" onclick="loadPreset('pothole')" title="Pothole Sample">
+              <img src="assets/waste.jpg" class="preset-thumb" onclick="loadPreset('waste')" title="Waste Accumulation">
+              <img src="assets/streetlight.jpg" class="preset-thumb" onclick="loadPreset('streetlight')" title="Streetlight Failure">
+            </div>
+
+            <button class="btn-primary" id="btnRunAi" style="width: 100%; margin-top: 1.5rem; justify-content: center; background: linear-gradient(135deg, #0284c7, #2563eb);" onclick="runGeminiAiAnalysis()">
+              <span>⚡</span> Analyze Photo with Hybrid AI Engine
+            </button>
+            <div id="aiAnalysisStatus" style="margin-top: 12px; font-size: 0.85rem; color: #94a3b8; text-align: center; background: rgba(15,23,42,0.6); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);"></div>
+          </div>
+
+          <!-- AI Classification Details Form -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+              <h3 style="margin: 0; font-family: var(--font-display);">2. AI Audit Results</h3>
+              <span id="aiProviderBadge" style="display: none; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.03em;"></span>
+            </div>
+            
+            <div id="auditPhotoContainer" style="margin-bottom: 1.2rem; text-align: center;">
+              <div style="padding: 2.25rem 1rem; border: 2px dashed rgba(255,255,255,0.12); border-radius: 12px; text-align: center; color: #64748b; background: rgba(15,23,42,0.4);">
+                <div style="font-size: 32px; margin-bottom: 6px;">📷</div>
+                <p style="font-size: 0.9rem; font-weight: 600; color: #94a3b8; margin-bottom: 4px;">No Photo Evidence Selected Yet</p>
+                <small style="font-size: 0.78rem; color: #64748b;">Upload a photo or select a test sample on Card 1 to run AI Audit Analysis.</small>
+              </div>
+            </div>
+            
+            <form id="reportForm" onsubmit="handleReportSubmit(event)">
+              <div class="form-group">
+                <label>Issue Category</label>
+                <select id="inputCategory" class="form-control" onchange="handleCategoryDropdownChange(event)" required>
+                  <option value="Potholes">🛣️ Potholes / Road Surface Damage</option>
+                  <option value="Waste">🗑️ Waste &amp; Trash Accumulation</option>
+                  <option value="Streetlights">💡 Streetlights &amp; Utility Poles</option>
+                  <option value="Open Manholes">🕳️ Open Manholes &amp; Drain Covers</option>
+                  <option value="Water Leaks">💧 Water Leaks &amp; Flooding</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Severity Level</label>
+                <select id="inputSeverity" class="form-control">
+                  <option value="CRITICAL">CRITICAL</option>
+                  <option value="HIGH" selected>HIGH</option>
+                  <option value="MEDIUM">MEDIUM</option>
+                  <option value="LOW">LOW</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Title / Headline</label>
+                <input type="text" id="inputTitle" class="form-control" placeholder="Headline summary" required>
+              </div>
+
+              <div class="form-group">
+                <label>AI Description &amp; Technical Notes</label>
+                <textarea id="inputDescription" class="form-control" rows="3" required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Target Municipal Authority</label>
+                <input type="text" id="inputDepartment" class="form-control" placeholder="e.g. Department of Public Works">
+              </div>
+
+              <div class="form-group">
+                <label>Location &amp; Geotag Address</label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" id="inputAddress" class="form-control" value="Anna Salai, T. Nagar, Chennai, Tamil Nadu, India" style="flex: 1;" required>
+                  <button type="button" onclick="getCurrentGpsLocation()" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; padding: 8px 14px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                    📡 Refresh GPS
+                  </button>
+                </div>
+                <input type="hidden" id="inputLat" value="13.0827">
+                <input type="hidden" id="inputLng" value="80.2707">
+                <div id="liveGpsBadge" style="margin-top: 8px; font-size: 0.82rem; color: #38bdf8; font-weight: 600; display: flex; align-items: center; justify-content: space-between; background: rgba(56, 189, 248, 0.08); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.25);">
+                  <span>📍 Real-Time Geotag Coordinates:</span>
+                  <span id="liveGpsText" style="font-family: monospace; font-weight: 700; color: #2dd4bf;">13.0827° N, 80.2707° E (Chennai)</span>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                <span>📋</span> Submit &amp; Generate Official Complaint Docket
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: OFFICIAL COMPLAINT DOCKET -->
+      <section id="tab-docket" class="tab-pane">
+        <div class="section-header">
+          <div>
+            <h2>Official Municipal Complaint Docket Ticket</h2>
+            <p style="color: #94a3b8; font-size: 0.85rem;">Official municipal tracking reference &amp; formal exportable complaint letter</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-primary" onclick="copyFormalComplaintText()" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8;">
+              📋 Copy Letter Text
+            </button>
+            <button class="btn-primary" onclick="window.print()">
+              🖨️ Print / Export PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Complaint Tickets Selector Registry Bar (Full Width Above Docket Paper) -->
+        <div id="docketSelectorBar" style="margin-bottom: 1.75rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.25rem; width: 100%; max-width: 850px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px;">
+            <h3 style="font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin: 0; display: flex; align-items: center; gap: 8px;">
+              📋 Active Complaint Tickets Registry <span id="docketCountBadge" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-size: 0.8rem; padding: 2px 10px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.4);">0 Tickets</span>
+            </h3>
+            <small style="color: #94a3b8; font-size: 0.8rem;">Click any ticket to view or withdraw independently</small>
+          </div>
+          <div id="docketSelectorList" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin;">
+            <!-- Dynamically rendered ticket selector chips -->
+          </div>
+        </div>
+
+        <div style="max-width: 850px; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 20px; padding: 2.25rem; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6); backdrop-filter: blur(20px);" id="docketPaper">
+          <!-- Ticket Header -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 28px;">🏛️</span>
+                <div>
+                  <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: #f8fafc; margin: 0;">GREATER CHENNAI CORPORATION (GCC)</h3>
+                  <p style="font-size: 0.8rem; color: #38bdf8; font-weight: 600; margin-top: 2px;">Municipal Infrastructure Audit &amp; Public Grievance Docket</p>
+                </div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-end;">
+                <span style="background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; padding: 8px 16px; border-radius: 12px; font-weight: 800; font-size: 0.95rem; font-family: monospace; letter-spacing: 0.5px; box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4);" id="docketTicketId">GCC-2026-CH-1094</span>
+                <button id="btnWithdrawCurrentDocket" onclick="withdrawReport(document.getElementById('docketTicketId').innerText.trim())" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5; padding: 8px 14px; border-radius: 12px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                  🗑️ Withdraw Issue
+                </button>
+              </div>
+              <div style="font-size: 0.72rem; color: #64748b; margin-top: 6px; font-weight: 600;" id="docketTimestamp">20 August 2026</div>
+            </div>
+          </div>
+
+          <!-- Ticket Key Metadata Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; background: rgba(30, 41, 59, 0.6); padding: 1.25rem; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);">
+            <div>
+              <span style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Issue Category</span>
+              <div id="docketCategory" style="font-weight: 700; color: #f8fafc; font-size: 0.95rem;">Pothole &amp; Road Surface Damage</div>
+            </div>
+            <div>
+              <span style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Assigned Severity</span>
+              <div id="docketSeverity" style="font-weight: 800; color: #f97316; font-size: 0.95rem;">HIGH SEVERITY</div>
+            </div>
+            <div>
+              <span style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Target Municipal Authority</span>
+              <div id="docketDepartment" style="font-weight: 600; color: #cbd5e1; font-size: 0.9rem;">Greater Chennai Corporation (GCC)</div>
+            </div>
+            <div>
+              <span style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Street Location &amp; Geotag</span>
+              <div id="docketAddress" style="font-weight: 600; color: #cbd5e1; font-size: 0.85rem;">Anna Salai, Mount Road, Chennai, TN, India</div>
+              <div id="docketCoordinatesDisplay" style="font-size: 0.8rem; color: #2dd4bf; font-weight: 700; margin-top: 2px;">📍 GPS: 13.0604° N, 80.2496° E</div>
+            </div>
+          </div>
+
+          <!-- Formal Complaint Letter Box -->
+          <div style="background: rgba(15, 23, 42, 0.98); border-left: 4px solid #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 1.5rem; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px;">
+              <span style="font-size: 0.78rem; color: #38bdf8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">📄 OFFICIAL FORMAL MUNICIPAL COMPLAINT LETTER</span>
+              <span style="font-size: 0.75rem; background: rgba(52, 211, 153, 0.15); color: #34d399; padding: 3px 10px; border-radius: 10px; font-weight: 700; border: 1px solid rgba(52, 211, 153, 0.3);">✨ AI AUDIT VERIFIED</span>
+            </div>
+            <pre id="docketDescription" style="font-family: 'Inter', monospace, sans-serif; font-size: 0.88rem; color: #e2e8f0; white-space: pre-wrap; line-height: 1.65; margin: 0; word-break: break-word;">FORMAL CIVIC COMPLAINT LETTER &amp; MUNICIPAL AUDIT REPORT
+Official Audit Reference: GCC-2026-CH-1094
+Date of Filing: 20 August 2026
+
+TO,
+The Executive Engineer / Zonal Officer,
+Greater Chennai Corporation (GCC) - Public Works Department,
+Zone 9 (T. Nagar / Anna Salai Division), Chennai, Tamil Nadu, India.
+
+SUBJECT: Formal Notice &amp; Immediate Remedial Directive Request for Severe Pothole &amp; Road Surface Fracture on Anna Salai.
+
+Respected Officer,
+
+I am writing this formal municipal complaint letter to bring to your immediate attention a critical civic infrastructure defect identified during a routine community audit located at:
+📍 Location: Anna Salai, Mount Road, T. Nagar, Chennai, Tamil Nadu, India
+🌐 High-Precision Geotag GPS: 13.0604° N, 80.2496° E
+
+1. AUDIT FINDINGS &amp; CLASSIFICATION:
+- Issue Category: Pothole &amp; Road Surface Damage
+- Municipal Priority &amp; Severity: HIGH SEVERITY / STRUCTURAL ROAD HAZARD
+- Technical Diagnostics: High-risk sub-surface asphalt fracture exceeding 6.5 inches depth, causing severe structural erosion across the active traffic lane.
+- Inspection Engine: Dual-Stream AI Vision Inspection (ResNet50 CV Feature Extractor + Google Gemini 1.5 Vision Multimodal LLM - 97.8% Verified Match).
+
+2. PUBLIC RISK ASSESSMENT &amp; COMMUNITY IMPACT:
+This unchecked road cavity poses an immediate life-threatening hazard to two-wheeler commuters, cyclists, and vehicular traffic, especially during peak hours and monsoon waterlogging. It has already caused multiple vehicle suspension damages and emergency traffic slowdowns.
+
+3. REQUIRED MUNICIPAL ACTION &amp; RESOLUTION DIRECTIVES:
+I hereby request the Municipal Authority to execute the following immediate actions:
+a) Deploy an emergency road inspection and repair crew from GCC Public Works within 24 hours.
+b) Install reflective safety barricades and hazard warning signages around the defect site immediately.
+c) Complete permanent bitumen resurfacing and cold-mix asphalt patch restoration within 48 hours.
+
+We anticipate your prompt official acknowledgment and action. Progress will be tracked live via the CivicLens Community Audit Portal.
+
+Yours faithfully,
+Citizen Auditor (Verified via CivicLens System)
+Tracking Docket Ticket: GCC-2026-CH-1094</pre>
+          </div>
+
+          <!-- Bottom Action Controls inside Ticket Paper -->
+          <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap;">
+            <button onclick="copyFormalComplaintText()" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">
+              📋 Copy Letter Text
+            </button>
+            <button onclick="window.print()" style="background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">
+              🖨️ Print / Export PDF
+            </button>
+            <button onclick="withdrawReport(document.getElementById('docketTicketId').innerText.trim())" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5; padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              🗑️ Withdraw Issue
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: PROFILE & SETTINGS -->
+      <section id="tab-profile" class="tab-pane">
+        <div class="section-header">
+          <h2>User Profile &amp; Settings</h2>
+        </div>
+
+        <div style="max-width: 600px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div style="width: 60px; height: 60px; background: var(--accent-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">👤</div>
+              <div>
+                <h3 style="font-family: var(--font-display); font-size: 1.1rem; color: #f8fafc;" id="profileUserEmail">Guest User</h3>
+                <p style="color: #38bdf8; font-size: 0.85rem; font-weight: 600;">Verified Citizen Reporter</p>
+              </div>
+            </div>
+
+            <button class="btn-auth" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5; cursor: pointer; padding: 10px 18px; border-radius: 12px; font-weight: 600;" onclick="handleUserLogout()">
+              🚪 Sign Out
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label>Google Gemini API Key (Optional)</label>
+            <input type="password" id="inputApiKey" class="form-control" placeholder="AIzaSy...">
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Google Maps JavaScript API SDK -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCavGL77cnSpPlJqBtZXyASxuiPjfMnatk&libraries=places" async defer></script>
+  <!-- Firebase Web SDK CDN -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    function updateAuthStateUI() {
+      const user = localStorage.getItem('civiclens_user');
+      const badge = document.getElementById('userEmailBadge');
+      const navText = document.getElementById('navEmailText');
+      const btnAuth = document.getElementById('btnAuthToggle');
+      const btnLogout = document.getElementById('btnLogout');
+      const profileEmail = document.getElementById('profileUserEmail');
+
+      if (user) {
+        if (navText) navText.innerText = user;
+        if (badge) badge.style.display = 'inline-flex';
+        if (btnAuth) btnAuth.style.display = 'none';
+        if (btnLogout) btnLogout.style.display = 'inline-block';
+        if (profileEmail) profileEmail.innerText = user;
+      } else {
+        if (badge) badge.style.display = 'none';
+        if (btnAuth) {
+          btnAuth.style.display = 'inline-block';
+          btnAuth.innerText = 'Sign In / Register';
+        }
+        if (btnLogout) btnLogout.style.display = 'none';
+        if (profileEmail) profileEmail.innerText = 'Guest User';
+      }
+    }
+
+    function handleUserLogout() {
+      if (typeof showLogoutConfirmFlashCard === 'function') {
+        showLogoutConfirmFlashCard();
+      } else {
+        confirmExecuteLogout();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAuthStateUI();
+    });
+  </script>
+</body>
+</html>

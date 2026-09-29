@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CivicLens</string>
+    <string name="app_tagline">AI-Powered Civic Issue Classifier &amp; Complaint Generator</string>
+    
+    <!-- Auth -->
+    <string name="login_title">Welcome Back</string>
+    <string name="login_subtitle">Sign in to report and track civic issues</string>
+    <string name="email_hint">Email Address</string>
+    <string name="password_hint">Password</string>
+    <string name="btn_login">Sign In</string>
+    <string name="btn_register">Create Account</string>
+    <string name="btn_guest">Continue as Guest</string>
+    <string name="register_title">Create Account</string>
+    <string name="register_subtitle">Join your community in fixing civic infrastructure</string>
+    <string name="name_hint">Full Name</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    
+    <!-- Navigation -->
+    <string name="nav_feed">Community Feed</string>
+    <string name="nav_map">Issue Map</string>
+    <string name="nav_profile">My Profile</string>
+
+    <!-- New Report -->
+    <string name="title_new_report">Report Civic Issue</string>
+    <string name="btn_take_photo">Take Photo</string>
+    <string name="btn_pick_gallery">Pick from Gallery</string>
+    <string name="btn_analyze_gemini">Analyze with Gemini AI</string>
+    <string name="lbl_issue_category">Issue Category</string>
+    <string name="lbl_severity">Severity Level</string>
+    <string name="lbl_description">Description / AI Summary</string>
+    <string name="lbl_department">Target Municipal Department</string>
+    <string name="lbl_location">Location &amp; Geotag</string>
+    <string name="btn_change_location">Change Location on Map</string>
+    <string name="btn_submit_report">Submit Official Complaint</string>
+    <string name="hint_gemini_api_key">Enter Gemini API Key (Optional)</string>
+    <string name="gemini_key_dialog_title">Gemini Vision API Key</string>
+    <string name="gemini_key_dialog_msg">Enter your Google Gemini API key to enable instant AI Vision issue classification.</string>
+    
+    <!-- Complaint Detail -->
+    <string name="title_complaint_report">Official Complaint Report</string>
+    <string name="lbl_ticket_number">Reference Ticket #</string>
+    <string name="lbl_status">Complaint Status</string>
+    <string name="lbl_date">Date &amp; Time</string>
+    <string name="btn_share_report">Share Complaint</string>
+    <string name="btn_export_pdf">Export as PDF</string>
+    
+    <!-- Maps -->
+    <string name="title_select_location">Select Issue Location</string>
+    <string name="btn_confirm_location">Confirm Location</string>
+</resources>

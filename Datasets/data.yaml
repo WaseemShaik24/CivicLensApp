@@ -1,0 +1,8 @@
+# Master Civic Issue Detection Dataset Configuration
+path: ./Civic_Issue_Detection
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 3
+names: ['Pothole_Road_Damage', 'Waste_Garbage_Pile', 'Broken_Streetlight_Pole']

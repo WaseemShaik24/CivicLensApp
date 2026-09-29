@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicLens - AI Infrastructure Auditor &amp; Complaint System</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Hero Landing Page Styling */
+    .hero-wrapper {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at 50% 20%, #1e293b, #0f172a 80%);
+      overflow: hidden;
+    }
+
+    /* Ambient Background Glow Orbs */
+    .glow-orb-1 {
+      position: absolute;
+      top: -100px;
+      left: 10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.35), transparent 70%);
+      border-radius: 50%;
+      filter: blur(50px);
+      animation: floatOrb 8s infinite alternate ease-in-out;
+    }
+
+    .glow-orb-2 {
+      position: absolute;
+      bottom: -100px;
+      right: 10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(13, 148, 136, 0.3), transparent 70%);
+      border-radius: 50%;
+      filter: blur(60px);
+      animation: floatOrb 10s infinite alternate-reverse ease-in-out;
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(30px) scale(1.1); }
+    }
+
+    /* Hero Section Container */
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+      position: relative;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      flex: 1;
+    }
+
+    @media (max-width: 900px) {
+      .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 2rem;
+      }
+    }
+
+    /* Hero Text & Summary */
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 8px 16px;
+      border-radius: 30px;
+      color: #93c5fd;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.25rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 30%, #93c5fd 70%, #2dd4bf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: #94a3b8;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    /* Summary Grid Highlights */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .summary-card {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .summary-card-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .summary-card h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 2px;
+    }
+
+    .summary-card p {
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
+    /* Highlighted Animated Action Box */
+    .auth-cta-box {
+      background: rgba(30, 41, 59, 0.85);
+      border: 2px solid rgba(59, 130, 246, 0.4);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(37, 99, 235, 0.25);
+      position: relative;
+      text-align: center;
+      animation: pulseBorder 3s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseBorder {
+      0% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(37, 99, 235, 0.2); border-color: rgba(59, 130, 246, 0.4); }
+      100% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(13, 148, 136, 0.4); border-color: rgba(13, 148, 136, 0.6); }
+    }
+
+    .cta-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-subheading {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Glowing Highlighted Buttons */
+    .btn-glow-login {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 14px;
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
+      transition: all 0.3s ease;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .btn-glow-login:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 35px rgba(37, 99, 235, 0.7);
+    }
+
+    .btn-glow-login::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+      transform: rotate(30deg);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { left: -100%; }
+      100% { left: 200%; }
+    }
+
+    .btn-glow-register {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 24px;
+      background: rgba(13, 148, 136, 0.15);
+      border: 2px solid #0d9488;
+      color: #2dd4bf;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(13, 148, 136, 0.2);
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-glow-register:hover {
+      background: #0d9488;
+      color: white;
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(13, 148, 136, 0.5);
+    }
+
+    .guest-link {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      display: inline-block;
+    }
+
+    .guest-link:hover {
+      color: #38bdf8;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero-wrapper">
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+
+    <!-- Header Bar -->
+    <header class="navbar">
+      <div class="logo-container">
+        <div class="logo-icon">🔍</div>
+        <div class="logo-text">
+          <h1>CivicLens</h1>
+          <p>AI Infrastructure Auditor</p>
+        </div>
+      </div>
+      <div class="nav-status">
+        <div class="ai-badge">
+          <div class="pulse-dot"></div>
+          <span>Gemini 2.5 Flash AI Ready</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Unique Hero Summary Section -->
+    <div class="hero-container">
+      <div>
+        <div class="hero-badge">
+          <span>✨</span> Empowering Citizens with AI Vision
+        </div>
+        
+        <h1 class="hero-title">Report &amp; Fix Civic Defects Instantly</h1>
+        
+        <p class="hero-subtitle">
+          CivicLens uses Google Gemini AI Vision to automatically detect road hazards, trash accumulation, broken streetlights, and water leaks. Snap a photo, geotag the pin, and receive an automated official municipal complaint ticket.
+        </p>
+
+        <!-- Summary Cards Grid -->
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-card-icon">📸</div>
+            <h4>AI Vision Audit</h4>
+            <p>Classifies potholes, waste, and lighting defects in seconds.</p>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-card-icon">📍</div>
+            <h4>Geotagged Maps</h4>
+            <p>High-accuracy GPS location pin placement on Google Maps.</p>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-card-icon">📜</div>
+            <h4>Official Complaint PDF</h4>
+            <p>Generates reference ticket IDs and exports formal municipal dockets.</p>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-card-icon">🔔</div>
+            <h4>Realtime Progress</h4>
+            <p>Track status from Filed ➔ Under Review ➔ Resolved.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Highlighted Animated Action Box -->
+      <div class="auth-cta-box">
+        <h2 class="cta-heading">Get Started with CivicLens</h2>
+        <p class="cta-subheading">Choose an option below to enter your citizen reporting portal</p>
+
+        <a href="login.html" class="btn-glow-login">
+          <span>🔐</span> Sign In to Account
+        </a>
+
+        <a href="register.html" class="btn-glow-register">
+          <span>📝</span> Register New Account
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

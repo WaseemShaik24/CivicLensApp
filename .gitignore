@@ -1,0 +1,11 @@
+﻿node_modules/
+.env
+.env.*
+!.env.example
+*.log
+dist/
+build/
+.gradle/
+local.properties
+app/src/main/res/values/google_maps_api.xml
+app/google-services.json

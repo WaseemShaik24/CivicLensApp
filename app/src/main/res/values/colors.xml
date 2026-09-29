@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Theme Colors -->
+    <color name="primary">#1E3A8A</color>
+    <color name="primary_variant">#172554</color>
+    <color name="secondary">#0D9488</color>
+    <color name="secondary_variant">#0F766E</color>
+    <color name="accent">#3B82F6</color>
+    
+    <!-- Backgrounds & Surfaces -->
+    <color name="bg_light">#F8FAFC</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="surface_dark">#0F172A</color>
+
+    <!-- Severity Badges -->
+    <color name="severity_low">#10B981</color>
+    <color name="severity_medium">#F59E0B</color>
+    <color name="severity_high">#F97316</color>
+    <color name="severity_critical">#EF4444</color>
+
+    <!-- Status Badges -->
+    <color name="status_filed">#3B82F6</color>
+    <color name="status_under_review">#8B5CF6</color>
+    <color name="status_scheduled">#F59E0B</color>
+    <color name="status_resolved">#10B981</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_muted">#94A3B8</color>
+    <color name="text_white">#FFFFFF</color>
+
+    <!-- Borders & Dividers -->
+    <color name="border_light">#E2E8F0</color>
+    <color name="ripple_light">#1F1E3A8A</color>
+</resources>

@@ -1,0 +1,91 @@
+{
+  "projectName": "CivicLens Complete Multi-Category Dataset Repository",
+  "version": "2.0.0",
+  "description": "Complete dataset configuration containing pre-annotated benchmark datasets for ALL 5 civic infrastructure defect categories.",
+  "totalCategories": 5,
+  "supportedFormats": ["YOLOv8", "COCO JSON", "Pascal VOC XML", "TensorFlow Records", "TFLite"],
+  "categories": [
+    {
+      "categoryId": "CAT_01",
+      "categoryName": "Pothole & Road Surface Damage",
+      "description": "Potholes, asphalt cracks, surface erosion, manhole defects",
+      "benchmarkDataset": "Road Damage Dataset (RDD2022) & Roboflow Pothole Benchmark",
+      "downloadUrl": "https://universe.roboflow.com/search?q=pothole",
+      "classes": [
+        "D00_Longitudinal_Crack",
+        "D10_Equal_Distance_Crack",
+        "D20_Lateral_Crack",
+        "D40_Pothole_Erosion",
+        "D50_Manhole_Defect"
+      ],
+      "recommendedModel": "YOLOv8s-Pothole",
+      "sampleCount": 26400,
+      "folderPath": "./Datasets/CAT_01_Potholes_and_Roads"
+    },
+    {
+      "categoryId": "CAT_02",
+      "categoryName": "Waste & Trash Accumulation",
+      "description": "Overflowing trash bins, uncollected garbage piles, illegal dumping, plastic waste",
+      "benchmarkDataset": "Trash Annotations in Context (TACO) & Roboflow Waste Dataset",
+      "downloadUrl": "https://universe.roboflow.com/search?q=waste",
+      "classes": [
+        "TACO_Overflowing_Bin",
+        "TACO_Uncollected_Garbage_Pile",
+        "TACO_Plastic_Litter",
+        "TACO_Hazardous_Waste"
+      ],
+      "recommendedModel": "YOLOv8s-Waste",
+      "sampleCount": 18200,
+      "folderPath": "./Datasets/CAT_02_Waste_and_Trash"
+    },
+    {
+      "categoryId": "CAT_03",
+      "categoryName": "Broken Streetlight & Pole",
+      "description": "Non-functional streetlight, flickering luminaire, damaged pole, exposed wiring",
+      "benchmarkDataset": "Municipal Electrical Infrastructure Benchmark",
+      "downloadUrl": "https://universe.roboflow.com/search?q=streetlight",
+      "classes": [
+        "E01_Damaged_Pole",
+        "E12_Flickering_Luminaire",
+        "E45_Exposed_Wiring",
+        "E80_Broken_Fixture"
+      ],
+      "recommendedModel": "YOLOv8s-Streetlight",
+      "sampleCount": 7800,
+      "folderPath": "./Datasets/CAT_03_Streetlights_and_Poles"
+    },
+    {
+      "categoryId": "CAT_04",
+      "categoryName": "Water Leakage & Drainage Overflow",
+      "description": "Burst pipe, overflowing storm drain, waterlogging, open sewer",
+      "benchmarkDataset": "Urban Water & Flood Infrastructure Dataset",
+      "downloadUrl": "https://universe.roboflow.com/search?q=water leakage",
+      "classes": [
+        "W01_Burst_Pipe_Leak",
+        "W12_Drainage_Overflow",
+        "W40_Waterlogging_Pool",
+        "W80_Open_Sewer_Hazard"
+      ],
+      "recommendedModel": "YOLOv8s-WaterDrainage",
+      "sampleCount": 6500,
+      "folderPath": "./Datasets/CAT_04_Water_and_Drainage"
+    },
+    {
+      "categoryId": "CAT_05",
+      "categoryName": "Traffic Hazard & Obstruction",
+      "description": "Damaged road sign, illegal parking, sidewalk obstruction, fallen barrier",
+      "benchmarkDataset": "Roboflow Traffic Hazard & Obstruction Benchmark",
+      "downloadUrl": "https://universe.roboflow.com/search?q=traffic sign damage",
+      "classes": [
+        "T01_Damaged_Road_Sign",
+        "T12_Illegal_Parking_Obstruction",
+        "T40_Sidewalk_Blockade",
+        "T80_Fallen_Traffic_Barrier"
+      ],
+      "recommendedModel": "YOLOv8s-TrafficHazard",
+      "sampleCount": 5400,
+      "folderPath": "./Datasets/CAT_05_Traffic_Hazards"
+    }
+  ],
+  "unifiedYamlConfig": "./Datasets/data.yaml"
+}
